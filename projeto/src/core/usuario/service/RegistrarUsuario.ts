@@ -5,7 +5,7 @@ import Usuario from "../model/Usuario";
 import ProvedorCriptografia from "./ProvedorCriptografia";
 import RepositorioUsuario from "./RepositorioUsuario";
 
-export default class RegistrarUsuario implements CasoDeUso<Usuario, void>{
+export default class RegistrarUsuario implements CasoDeUso<Usuario, void> {
 
     constructor(
         private repositorio: RepositorioUsuario,
@@ -27,9 +27,6 @@ export default class RegistrarUsuario implements CasoDeUso<Usuario, void>{
             senha: senhaCripto
         }
 
-        this.repositorio.inserir(usuario);
-
-        console.log(`\n\n${senhaCripto}`);
-
+        this.repositorio.inserir(novoUsuario);
     }
 }

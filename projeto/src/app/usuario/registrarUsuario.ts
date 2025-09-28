@@ -2,33 +2,32 @@ import SenhaCripto from "@/adapter/auth/SenhaCripto";
 import Usuario from "@/core/usuario/model/Usuario";
 import RegistrarUsuario from "@/core/usuario/service/RegistrarUsuario";
 import TerminalUtil from "../util/TerminalUtil";
-import RepositorioUsuarioEmMemoria from "../../adapter/db/RepositorioUsuarioEmMemoria";
+import RepositorioUsuarioPg from "@/adapter/db/repositorioUsuarioPg";
 
 export default async function registrarUsuario() {
     TerminalUtil.titulo('Registrar Usuario');
 
-    const nome = await TerminalUtil.campoRequerido('Nome: ', 'Nome teste Padrao');
-    const email = await TerminalUtil.campoRequerido('email: ', 'email@padrao.default');
-    const senha = await TerminalUtil.campoRequerido('Senha: ', '123');
+    const { campoRequerido, sucesso, erro, esperarEnter } = TerminalUtil;
+
+    const nome = await campoRequerido('Nome: ');
+    const email = await campoRequerido('email: ');
+    const senha = await campoRequerido('Senha: ');
 
     const usuario: Usuario = { nome, email, senha }
-    const repositorio = new RepositorioUsuarioEmMemoria();
+    const repositorio = new RepositorioUsuarioPg();// new RepositorioUsuarioEmMemoria();
 
     const provedorCripto = new SenhaCripto(); //new EspacoSenhaCripto(); //new InverterSenhaCript();
     const casoDeUso = new RegistrarUsuario(repositorio, provedorCripto);
 
-    await casoDeUso.executar(usuario);
-
-    TerminalUtil.sucesso('Usuario registrado com sucesso');
-
-    await TerminalUtil.esperarEnter();
-
     try {
-        await casoDeUso.executar(usuario)
-    } catch (e: any) {
+        await casoDeUso.executar(usuario);
 
-        await TerminalUtil.erro(e.message);
-        await TerminalUtil.esperarEnter();
+        sucesso('Usuario registrado com sucesso');
+    } catch (e: any) {
+        await erro(e.message);
+    }
+    finally {
+        await esperarEnter();
     }
 
 }
